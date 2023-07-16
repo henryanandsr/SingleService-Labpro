@@ -10,14 +10,15 @@ import (
 
 var DB *gorm.DB
 
-func ConnectToDB() {
+func ConnectToDB() error {
 	var err error
 	dsn := os.Getenv("DB_URL")
 	DB, err = gorm.Open(postgres.Open(dsn), &gorm.Config{})
 
 	if err != nil {
-		log.Fatalf("failed to connect database: %v", err)
+		return err
 	}
 
 	log.Println("database connection successful")
+	return nil
 }
