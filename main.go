@@ -15,5 +15,6 @@ func main() {
 	r := gin.Default()
 	r.POST("/barang", controllers.PostBarang)
 	r.POST("/company", controllers.PostCompany)
+	r.DELETE("/company/:id", controllers.DeleteCompany)
 	r.Run(":8080")
 }
