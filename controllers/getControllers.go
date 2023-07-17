@@ -26,3 +26,31 @@ func GetBarang(c *gin.Context) {
 	})
 }
 
+func GetBarangs(c *gin.Context) {
+	var barangs []model.Barang
+	query := initializers.DB.Model(&model.Barang{})
+
+	q := c.Query("q")
+	if q != "" {
+		query = query.Where("NamaBarang LIKE ? OR KodeBarang LIKE ?", "%"+q+"%", "%"+q+"%")
+	}
+
+	perusahaan := c.Query("perusahaan")
+	if perusahaan != "" {
+		query = query.Where("PerusahaanPembuat = ?", perusahaan)
+	}
+
+	if err := query.Find(&barangs).Error; err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{
+			"status":  "error",
+			"message": err.Error(),
+		})
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{
+		"status":  "success",
+		"message": "Barangs retrieved successfully",
+		"data":    barangs,
+	})
+}
