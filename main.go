@@ -14,8 +14,9 @@ func init() {
 func main() {
 	r := gin.Default()
 	r.POST("/barang", controllers.PostBarang)
-	r.POST("/company", controllers.PostCompany)
-	r.DELETE("/company/:id", controllers.DeleteCompany)
+	r.POST("/perusahaan", controllers.PostCompany)
+	r.DELETE("/perusahaan/:id", controllers.DeleteCompany)
 	r.DELETE("/barang/:id", controllers.DeleteBarang)
+	r.GET("/barang/:id", controllers.GetBarang)
 	r.Run(":8080")
 }

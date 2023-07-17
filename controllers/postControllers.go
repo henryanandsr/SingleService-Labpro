@@ -45,11 +45,11 @@ func PostBarang(c *gin.Context) {
 	}
 
 	barang := &model.Barang{
-		ID:           uuid.New().String(),
-		KodeBarang:   request.KodeBarang,
-		NamaBarang:   request.NamaBarang,
-		HargaBarang:  request.HargaBarang,
-		StokBarang:   request.StokBarang,
+		ID:                uuid.New().String(),
+		KodeBarang:        request.KodeBarang,
+		NamaBarang:        request.NamaBarang,
+		HargaBarang:       request.HargaBarang,
+		StokBarang:        request.StokBarang,
 		PerusahaanPembuat: request.PerusahaanID,
 	}
 	initializers.DB.Create(barang)
@@ -82,11 +82,6 @@ func PostCompany(c *gin.Context) {
 		})
 		return
 	}
-	// var highestIDCompany model.Company
-	// initializers.DB.Order("id desc").First(&highestIDCompany)
-	// highestID, _ := strconv.Atoi(highestIDCompany.ID)
-	// newID := highestID + 1
-	// newIDString := strconv.Itoa(newID)
 	company := &model.Company{
 		ID:        uuid.New().String(),
 		Nama:      request.Nama,
