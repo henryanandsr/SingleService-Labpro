@@ -54,6 +54,7 @@ func PostBarang(c *gin.Context) {
 	}
 
 	barang := &model.Barang{
+		ID:           uuid.New().String(),
 		KodeBarang:   request.KodeBarang,
 		NamaBarang:   request.NamaBarang,
 		HargaBarang:  request.HargaBarang,

@@ -1,7 +1,8 @@
 package models
 
 type Barang struct {
-	KodeBarang   string `gorm:"primary_key;auto_increment" json:"kodeBarang"`
+	ID           string `gorm:"primary_key;auto_increment" json:"id"`
+	KodeBarang   string `gorm:"not null" json:"kodeBarang"`
 	NamaBarang   string `gorm:"size:255;not null" json:"namaBarang"`
 	HargaBarang  int    `gorm:"not null" json:"hargaBarang"`
 	StokBarang   int    `gorm:"not null" json:"stokBarang"`
