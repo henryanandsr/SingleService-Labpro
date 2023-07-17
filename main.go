@@ -16,5 +16,6 @@ func main() {
 	r.POST("/barang", controllers.PostBarang)
 	r.POST("/company", controllers.PostCompany)
 	r.DELETE("/company/:id", controllers.DeleteCompany)
+	r.DELETE("/barang/:id", controllers.DeleteBarang)
 	r.Run(":8080")
 }

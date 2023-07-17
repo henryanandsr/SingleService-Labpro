@@ -43,15 +43,6 @@ func PostBarang(c *gin.Context) {
 		})
 		return
 	}
-	var existingCompany model.Company
-	if err := initializers.DB.Where("id = ?", request.PerusahaanID).First(&existingCompany).Error; err != nil {
-		c.JSON(http.StatusNotFound, gin.H{
-			"status":  "error",
-			"message": "Perusahaan not found",
-			"data":    nil,
-		})
-		return
-	}
 
 	barang := &model.Barang{
 		ID:           uuid.New().String(),
@@ -59,7 +50,7 @@ func PostBarang(c *gin.Context) {
 		NamaBarang:   request.NamaBarang,
 		HargaBarang:  request.HargaBarang,
 		StokBarang:   request.StokBarang,
-		IDPerusahaan: existingCompany.Nama,
+		PerusahaanPembuat: request.PerusahaanID,
 	}
 	initializers.DB.Create(barang)
 	c.JSON(http.StatusOK, gin.H{
