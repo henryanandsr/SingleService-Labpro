@@ -18,6 +18,8 @@ func main() {
 	r.DELETE("/perusahaan/:id", controllers.DeleteCompany)
 	r.DELETE("/barang/:id", controllers.DeleteBarang)
 	r.GET("/barang/:id", controllers.GetBarang)
+	r.GET("/perusahaan/:id", controllers.GetPerusahaan)
+	r.GET("/perusahaan", controllers.GetPerusahaans)
 	r.GET("/barang", controllers.GetBarangs)
 	r.Run(":8080")
 }
