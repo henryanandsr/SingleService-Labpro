@@ -23,5 +23,7 @@ func main() {
 	r.GET("/barang", controllers.GetBarangs)
 	r.PUT("/barang/:id", controllers.UpdateBarang)
 	r.PUT("/perusahaan/:id", controllers.UpdateCompany)
+	r.POST("/login", controllers.Login)
+	r.GET("/self", controllers.Self)
 	r.Run(":8080")
 }

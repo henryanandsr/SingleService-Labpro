@@ -4,7 +4,6 @@ import (
 	"SingleService-Labpro/initializers"
 	model "SingleService-Labpro/models"
 	"net/http"
-	"strings"
 
 	"github.com/gin-gonic/gin"
 	"github.com/google/uuid"
@@ -26,23 +25,6 @@ func PostBarang(c *gin.Context) {
 		})
 		return
 	}
-	if request.HargaBarang <= 0 || request.StokBarang < 0 || request.PerusahaanID == "" {
-		c.JSON(http.StatusBadRequest, gin.H{
-			"status":  "error",
-			"message": "Invalid data",
-			"data":    nil,
-		})
-		return
-	}
-	var existingBarang model.Barang
-	if err := initializers.DB.Where("kode_barang = ?", request.KodeBarang).First(&existingBarang).Error; err == nil {
-		c.JSON(http.StatusConflict, gin.H{
-			"status":  "error",
-			"message": "KodeBarang already exists",
-			"data":    nil,
-		})
-		return
-	}
 
 	barang := &model.Barang{
 		ID:                uuid.New().String(),
@@ -52,7 +34,14 @@ func PostBarang(c *gin.Context) {
 		StokBarang:        request.StokBarang,
 		PerusahaanPembuat: request.PerusahaanID,
 	}
-	initializers.DB.Create(barang)
+	result := initializers.DB.Create(barang)
+	if result.Error != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{
+			"status":  "error",
+			"message": result.Error.Error(),
+		})
+		return
+	}
 	c.JSON(http.StatusOK, gin.H{
 		"status":  "success",
 		"message": "Barang created successfully",
@@ -75,13 +64,13 @@ func PostCompany(c *gin.Context) {
 		})
 		return
 	}
-	if len(request.Kode) != 3 || strings.ToUpper(request.Kode) != request.Kode {
-		c.JSON(http.StatusBadRequest, gin.H{
-			"status":  "error",
-			"message": "Invalid Kode, it must be all upper case and have a length of 3",
-		})
-		return
-	}
+	// if len(request.Kode) != 3 || strings.ToUpper(request.Kode) != request.Kode {
+	// 	c.JSON(http.StatusBadRequest, gin.H{
+	// 		"status":  "error",
+	// 		"message": "Invalid Kode, it must be all upper case and have a length of 3",
+	// 	})
+	// 	return
+	// }
 	company := &model.Company{
 		ID:        uuid.New().String(),
 		Nama:      request.Nama,

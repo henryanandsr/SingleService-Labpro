@@ -16,5 +16,5 @@ func main() {
 		log.Fatalf("Failed to connect to database: %v", err)
 	}
 
-	initializers.DB.AutoMigrate(&model.Barang{}, &model.Company{})
+	initializers.DB.AutoMigrate(&model.Company{}, &model.Barang{}, &model.User{})
 }
