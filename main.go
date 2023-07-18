@@ -21,5 +21,7 @@ func main() {
 	r.GET("/perusahaan/:id", controllers.GetPerusahaan)
 	r.GET("/perusahaan", controllers.GetPerusahaans)
 	r.GET("/barang", controllers.GetBarangs)
+	r.PUT("/barang/:id", controllers.UpdateBarang)
+	r.PUT("/perusahaan/:id", controllers.UpdateCompany)
 	r.Run(":8080")
 }
