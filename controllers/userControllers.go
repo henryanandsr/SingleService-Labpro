@@ -3,21 +3,21 @@ package controllers
 import (
 	"SingleService-Labpro/initializers"
 	model "SingleService-Labpro/models"
+	"fmt"
 	"net/http"
-	"time"
+	"strings"
 
 	"github.com/dgrijalva/jwt-go"
 	"github.com/gin-gonic/gin"
 )
 
-var jwtKey = []byte("your_secret_key") // Replace with your secret key
+var jwtKey = []byte("default_key")
 
 type Claims struct {
 	Username string `json:"username"`
 	jwt.StandardClaims
 }
 
-// Login endpoint
 func Login(c *gin.Context) {
 	var credentials model.User
 	if err := c.ShouldBindJSON(&credentials); err != nil {
@@ -36,16 +36,14 @@ func Login(c *gin.Context) {
 		return
 	}
 
-	expirationTime := time.Now().Add(5 * time.Minute) // Token valid for 5 minutes, adjust as needed
 	claims := &Claims{
-		Username: credentials.Username,
-		StandardClaims: jwt.StandardClaims{
-			ExpiresAt: expirationTime.Unix(),
-		},
+		Username:       credentials.Username,
+		StandardClaims: jwt.StandardClaims{},
 	}
 
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
 	tokenString, err := token.SignedString(jwtKey)
+	fmt.Println("Token generated:", tokenString)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"status": "error", "message": "Could not generate token", "data": nil})
 		return
@@ -62,11 +60,13 @@ func Login(c *gin.Context) {
 			"token": tokenString,
 		},
 	})
+	c.Writer.Header().Set("Authorization", "Bearer "+tokenString)
 }
 
 // Self endpoint
 func Self(c *gin.Context) {
 	tokenString := c.Request.Header.Get("Authorization")
+	tokenString = strings.Split(tokenString, " ")[1]
 	claims := &Claims{}
 
 	tkn, err := jwt.ParseWithClaims(tokenString, claims, func(token *jwt.Token) (interface{}, error) {

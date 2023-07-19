@@ -5,11 +5,23 @@ import (
 	model "SingleService-Labpro/models"
 	"net/http"
 
+	"github.com/dgrijalva/jwt-go"
 	"github.com/gin-gonic/gin"
 	"github.com/google/uuid"
 )
 
 func PostBarang(c *gin.Context) {
+	tokenString := c.Request.Header.Get("Authorization")
+	claims := &Claims{}
+
+	tkn, err := jwt.ParseWithClaims(tokenString, claims, func(token *jwt.Token) (interface{}, error) {
+		return jwtKey, nil
+	})
+
+	if err != nil || !tkn.Valid || claims.Username != "admin" {
+		c.JSON(http.StatusUnauthorized, gin.H{"status": "error", "message": "Unauthorized", "data": nil})
+		return
+	}
 	var request struct {
 		NamaBarang   string `json:"nama"`
 		HargaBarang  int    `json:"harga"`
@@ -50,6 +62,17 @@ func PostBarang(c *gin.Context) {
 }
 
 func PostCompany(c *gin.Context) {
+	tokenString := c.Request.Header.Get("Authorization")
+	claims := &Claims{}
+
+	tkn, err := jwt.ParseWithClaims(tokenString, claims, func(token *jwt.Token) (interface{}, error) {
+		return jwtKey, nil
+	})
+
+	if err != nil || !tkn.Valid || claims.Username != "admin" {
+		c.JSON(http.StatusUnauthorized, gin.H{"status": "error", "message": "Unauthorized", "data": nil})
+		return
+	}
 	var request struct {
 		Nama   string `json:"nama"`
 		Alamat string `json:"alamat"`
@@ -64,13 +87,6 @@ func PostCompany(c *gin.Context) {
 		})
 		return
 	}
-	// if len(request.Kode) != 3 || strings.ToUpper(request.Kode) != request.Kode {
-	// 	c.JSON(http.StatusBadRequest, gin.H{
-	// 		"status":  "error",
-	// 		"message": "Invalid Kode, it must be all upper case and have a length of 3",
-	// 	})
-	// 	return
-	// }
 	company := &model.Company{
 		ID:        uuid.New().String(),
 		Nama:      request.Nama,
