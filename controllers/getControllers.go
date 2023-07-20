@@ -44,11 +44,11 @@ func GetPerusahaan(c *gin.Context) {
 }
 func GetBarangs(c *gin.Context) {
 	var barangs []model.Barang
-	query := initializers.DB.Model(&model.Barang{})
+	query := initializers.DB.Model(&model.Barang{}).Select("id, kode_barang, nama_barang, harga_barang, stok_barang, perusahaanpembuat")
 
 	q := c.Query("q")
 	if q != "" {
-		query = query.Where("NamaBarang LIKE ? OR KodeBarang LIKE ?", "%"+q+"%", "%"+q+"%")
+		query = query.Where("nama_barang LIKE ? OR kode_barang LIKE ?", "%"+q+"%", "%"+q+"%")
 	}
 
 	perusahaan := c.Query("perusahaan")
@@ -73,11 +73,10 @@ func GetBarangs(c *gin.Context) {
 
 func GetPerusahaans(c *gin.Context) {
 	var companies []model.Company
-	query := initializers.DB.Model(&model.Company{})
+	query := initializers.DB.Model(&model.Company{}).Select("id, nama, kode_pajak, alamat, no_telepon")
 
-	q := c.Query("q")
-	if q != "" {
-		query = query.Where("Nama LIKE ? OR KodePajak LIKE ?", "%"+q+"%", "%"+q+"%")
+	if q := c.Query("q"); q != "" {
+		query = query.Where("Nama LIKE ? OR kode_pajak LIKE ?", "%"+q+"%", "%"+q+"%")
 	}
 
 	if err := query.Find(&companies).Error; err != nil {

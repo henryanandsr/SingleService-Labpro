@@ -4,6 +4,7 @@ import (
 	"SingleService-Labpro/initializers"
 	model "SingleService-Labpro/models"
 	"net/http"
+	"strings"
 
 	"github.com/dgrijalva/jwt-go"
 	"github.com/gin-gonic/gin"
@@ -11,7 +12,8 @@ import (
 )
 
 func PostBarang(c *gin.Context) {
-	tokenString := c.Request.Header.Get("Authorization")
+	authHeader := c.Request.Header.Get("Authorization")
+	tokenString := strings.TrimPrefix(authHeader, "Bearer ")
 	claims := &Claims{}
 
 	tkn, err := jwt.ParseWithClaims(tokenString, claims, func(token *jwt.Token) (interface{}, error) {
@@ -62,13 +64,13 @@ func PostBarang(c *gin.Context) {
 }
 
 func PostCompany(c *gin.Context) {
-	tokenString := c.Request.Header.Get("Authorization")
+	authHeader := c.Request.Header.Get("Authorization")
+	tokenString := strings.TrimPrefix(authHeader, "Bearer ")
 	claims := &Claims{}
 
 	tkn, err := jwt.ParseWithClaims(tokenString, claims, func(token *jwt.Token) (interface{}, error) {
 		return jwtKey, nil
 	})
-
 	if err != nil || !tkn.Valid || claims.Username != "admin" {
 		c.JSON(http.StatusUnauthorized, gin.H{"status": "error", "message": "Unauthorized", "data": nil})
 		return

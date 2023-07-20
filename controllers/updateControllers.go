@@ -4,11 +4,24 @@ import (
 	"SingleService-Labpro/initializers"
 	model "SingleService-Labpro/models"
 	"net/http"
+	"strings"
 
+	"github.com/dgrijalva/jwt-go"
 	"github.com/gin-gonic/gin"
 )
 
 func UpdateBarang(c *gin.Context) {
+	authHeader := c.Request.Header.Get("Authorization")
+	tokenString := strings.TrimPrefix(authHeader, "Bearer ")
+	claims := &Claims{}
+
+	tkn, err := jwt.ParseWithClaims(tokenString, claims, func(token *jwt.Token) (interface{}, error) {
+		return jwtKey, nil
+	})
+	if err != nil || !tkn.Valid || claims.Username != "admin" {
+		c.JSON(http.StatusUnauthorized, gin.H{"status": "error", "message": "Unauthorized", "data": nil})
+		return
+	}
 	id := c.Param("id")
 	var barang model.Barang
 
@@ -21,11 +34,11 @@ func UpdateBarang(c *gin.Context) {
 	}
 
 	var updateData struct {
-		NamaBarang        string `json:"namaBarang"`
-		HargaBarang       int    `json:"hargaBarang"`
-		StokBarang        int    `json:"stokBarang"`
-		PerusahaanPembuat string `json:"perusahaanPembuat"`
-		KodeBarang        string `json:"kodeBarang"`
+		NamaBarang        string `json:"nama"`
+		HargaBarang       int    `json:"harga"`
+		StokBarang        int    `json:"stok"`
+		PerusahaanPembuat string `json:"perusahaan_id"`
+		KodeBarang        string `json:"kode"`
 	}
 	if err := c.BindJSON(&updateData); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
@@ -57,6 +70,17 @@ func UpdateBarang(c *gin.Context) {
 }
 
 func UpdateCompany(c *gin.Context) {
+	authHeader := c.Request.Header.Get("Authorization")
+	tokenString := strings.TrimPrefix(authHeader, "Bearer ")
+	claims := &Claims{}
+
+	tkn, err := jwt.ParseWithClaims(tokenString, claims, func(token *jwt.Token) (interface{}, error) {
+		return jwtKey, nil
+	})
+	if err != nil || !tkn.Valid || claims.Username != "admin" {
+		c.JSON(http.StatusUnauthorized, gin.H{"status": "error", "message": "Unauthorized", "data": nil})
+		return
+	}
 	id := c.Param("id")
 	var company model.Company
 
@@ -71,8 +95,8 @@ func UpdateCompany(c *gin.Context) {
 	var updateData struct {
 		Nama      string `json:"nama"`
 		Alamat    string `json:"alamat"`
-		NoTelepon string `json:"noTelepon"`
-		KodePajak string `json:"kodePajak"`
+		NoTelepon string `json:"no_telp"`
+		KodePajak string `json:"kode"`
 	}
 	if err := c.BindJSON(&updateData); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
