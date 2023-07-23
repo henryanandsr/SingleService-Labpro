@@ -10,6 +10,46 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
+func UpdateStokBarang(c *gin.Context) {
+	id := c.Param("id")
+	var barang model.Barang
+
+	if err := initializers.DB.Where("ID = ?", id).First(&barang).Error; err != nil {
+		c.JSON(http.StatusNotFound, gin.H{
+			"status":  "error",
+			"message": "Barang not found",
+		})
+		return
+	}
+
+	var updateData struct {
+		StokBarang int `json:"stok"` // only allow updating stock
+	}
+	if err := c.BindJSON(&updateData); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"status":  "error",
+			"message": "Invalid request data",
+		})
+		return
+	}
+
+	barang.StokBarang = updateData.StokBarang
+
+	if err := initializers.DB.Save(&barang).Error; err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{
+			"status":  "error",
+			"message": err.Error(),
+		})
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{
+		"status":  "success",
+		"message": "Barang updated successfully",
+		"data":    barang,
+	})
+}
+
 func UpdateBarang(c *gin.Context) {
 	authHeader := c.Request.Header.Get("Authorization")
 	tokenString := strings.TrimPrefix(authHeader, "Bearer ")

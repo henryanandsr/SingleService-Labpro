@@ -22,16 +22,13 @@ func init() {
 
 func AuthMiddleware() gin.HandlerFunc {
 	return func(c *gin.Context) {
-		// Get the JWT string from the header
 		tokenString := c.GetHeader("Authorization")
 
-		// If the token is empty return an error
 		if tokenString == "" {
 			c.AbortWithStatusJSON(http.StatusUnauthorized, gin.H{"error": "No Authorization header provided"})
 			return
 		}
 
-		// Validate token
 		claims := &jwt.StandardClaims{}
 		tokenParts := strings.Split(tokenString, " ")
 		if len(tokenParts) < 2 {
@@ -55,7 +52,6 @@ func AuthMiddleware() gin.HandlerFunc {
 			return
 		}
 
-		// Everything OK, proceed with the request
 		c.Next()
 	}
 }
@@ -63,8 +59,9 @@ func AuthMiddleware() gin.HandlerFunc {
 func main() {
 	r := gin.Default()
 	config := cors.DefaultConfig()
-	config.AllowOrigins = []string{"http://localhost:5173"}
+	config.AllowOrigins = []string{"http://localhost:5173", "http://localhost:3000"}
 	config.AllowHeaders = []string{"Origin", "Content-Length", "Content-Type", "Authorization"}
+	config.AllowCredentials = true
 	r.Use(cors.New(config))
 
 	user := model.User{
@@ -87,14 +84,15 @@ func main() {
 		authorized.POST("/perusahaan", controllers.PostCompany)
 		authorized.DELETE("/perusahaan/:id", controllers.DeleteCompany)
 		authorized.DELETE("/barang/:id", controllers.DeleteBarang)
-		authorized.GET("/barang/:id", controllers.GetBarang)
 		authorized.GET("/perusahaan/:id", controllers.GetPerusahaan)
 		authorized.GET("/perusahaan", controllers.GetPerusahaans)
-		authorized.GET("/barang", controllers.GetBarangs)
-		authorized.PUT("/barang/:id", controllers.UpdateBarang)
 		authorized.PUT("/perusahaan/:id", controllers.UpdateCompany)
 		authorized.GET("/self", controllers.Self)
 	}
+	r.PUT("/barang/:id", controllers.UpdateBarang)
+	r.PUT("/barang/stok/:id", controllers.UpdateStokBarang)
+	r.GET("/barang", controllers.GetBarangs)
+	r.GET("/barang/:id", controllers.GetBarang)
 
 	r.POST("/login", controllers.Login)
 
