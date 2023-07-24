@@ -59,7 +59,7 @@ func AuthMiddleware() gin.HandlerFunc {
 func main() {
 	r := gin.Default()
 	config := cors.DefaultConfig()
-	config.AllowOrigins = []string{"http://localhost:5173", "https://monolith-full-stack.vercel.app/"}
+	config.AllowOrigins = []string{"http://localhost:5173", "https://monolith-full-stack.vercel.app"}
 	config.AllowHeaders = []string{"Origin", "Content-Length", "Content-Type", "Authorization"}
 	config.AllowCredentials = true
 	r.Use(cors.New(config))
