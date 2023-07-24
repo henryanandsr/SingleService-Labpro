@@ -6,6 +6,7 @@ import (
 	model "SingleService-Labpro/models"
 	"fmt"
 	"net/http"
+	"os"
 	"strings"
 
 	"github.com/dgrijalva/jwt-go"
@@ -63,6 +64,7 @@ func main() {
 	config.AllowHeaders = []string{"Origin", "Content-Length", "Content-Type", "Authorization"}
 	config.AllowCredentials = true
 	r.Use(cors.New(config))
+	port := os.Getenv("PORT")
 
 	user := model.User{
 		Username: "admin",
@@ -95,6 +97,8 @@ func main() {
 	r.GET("/barang/:id", controllers.GetBarang)
 
 	r.POST("/login", controllers.Login)
-
-	r.Run(":8080")
+	if port == "" {
+		port = "8080"
+	}
+	r.Run(":" + port)
 }
