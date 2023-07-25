@@ -1,11 +1,19 @@
 import { createContext, useContext } from "react";
 
+type LoginResponseData = {
+  user: {
+    username: string;
+    name: string;
+  };
+  token: string;
+};
+
 type AuthContext = {
   user: {
     username: string;
   };
   token: string | null;
-  login: (username: string, password: string) => Promise<void>;
+  login: (username: string, password: string) => Promise<LoginResponseData>;
   logout: () => void;
 };
 
@@ -15,7 +23,13 @@ const context = createContext<AuthContext>({
   },
   token: null,
   login: async () => {
-    return undefined;
+    return {
+      user: {
+        username: "",
+        name: "",
+      },
+      token: "",
+    };
   },
   logout: () => {},
 });
