@@ -79,18 +79,18 @@ func main() {
 		fmt.Println("User already exists")
 	}
 
-	authorized := r.Group("/")
-	authorized.Use(AuthMiddleware())
-	{
-		authorized.POST("/barang", controllers.PostBarang)
-		authorized.POST("/perusahaan", controllers.PostCompany)
-		authorized.DELETE("/perusahaan/:id", controllers.DeleteCompany)
-		authorized.DELETE("/barang/:id", controllers.DeleteBarang)
-		authorized.GET("/perusahaan/:id", controllers.GetPerusahaan)
-		authorized.GET("/perusahaan", controllers.GetPerusahaans)
-		authorized.PUT("/perusahaan/:id", controllers.UpdateCompany)
-		authorized.GET("/self", controllers.Self)
-	}
+	// authorized := r.Group("/")
+	// authorized.Use(AuthMiddleware())
+	// {
+	r.POST("/barang", controllers.PostBarang)
+	r.POST("/perusahaan", controllers.PostCompany)
+	r.DELETE("/perusahaan/:id", controllers.DeleteCompany)
+	r.DELETE("/barang/:id", controllers.DeleteBarang)
+	r.GET("/perusahaan/:id", controllers.GetPerusahaan)
+	r.GET("/perusahaan", controllers.GetPerusahaans)
+	r.PUT("/perusahaan/:id", controllers.UpdateCompany)
+	r.GET("/self", controllers.Self)
+	// }
 	r.PUT("/barang/:id", controllers.UpdateBarang)
 	r.PUT("/barang/stok/:id", controllers.UpdateStokBarang)
 	r.GET("/barang", controllers.GetBarangs)
