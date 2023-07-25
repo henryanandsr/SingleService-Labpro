@@ -1,16 +1,6 @@
 import { Button, Center, Heading, VStack, Input } from "@chakra-ui/react";
 import { useAuth } from "@/contexts";
 import { useState } from "react";
-import { LoginResponseData } from "@/types";
-
-// Define an interface for the login response data
-interface LoginResponseData {
-  user: {
-    username: string;
-    name: string;
-  };
-  token: string;
-}
 
 const LoginPage = () => {
   const { login } = useAuth();
@@ -28,13 +18,12 @@ const LoginPage = () => {
 
   const handleLogin = async () => {
     try {
-      // Explicitly type the response variable
-      const response: LoginResponseData = await login(formData.username, formData.password);
-      console.log("Login response :", response);
-      const token = response?.token;
-      if (token) {
+      const response = await login(formData.username, formData.password);
+      console.log("Login response :",response);
+      const token = response?.data?.token;
+      if (token){
         console.log("Token stored:", window.localStorage.getItem("token"));
-      } else {
+      } else{
         console.log("FKDJKFLDKL");
       }
     } catch (error) {
