@@ -4,7 +4,6 @@ import (
 	"SingleService-Labpro/initializers"
 	model "SingleService-Labpro/models"
 	"net/http"
-	"strings"
 
 	"github.com/dgrijalva/jwt-go"
 	"github.com/gin-gonic/gin"
@@ -52,11 +51,11 @@ func UpdateStokBarang(c *gin.Context) {
 
 func UpdateBarang(c *gin.Context) {
 	authHeader := c.Request.Header.Get("Authorization")
-	tokenString := strings.TrimPrefix(authHeader, "Bearer ")
+	tokenString := authHeader
 	claims := &Claims{}
 
 	tkn, err := jwt.ParseWithClaims(tokenString, claims, func(token *jwt.Token) (interface{}, error) {
-		return jwtKey, nil
+		return Jwtkey, nil
 	})
 	if err != nil || !tkn.Valid || claims.Username != "admin" {
 		c.JSON(http.StatusUnauthorized, gin.H{"status": "error", "message": "Unauthorized", "data": nil})
@@ -111,11 +110,11 @@ func UpdateBarang(c *gin.Context) {
 
 func UpdateCompany(c *gin.Context) {
 	authHeader := c.Request.Header.Get("Authorization")
-	tokenString := strings.TrimPrefix(authHeader, "Bearer ")
+	tokenString := authHeader
 	claims := &Claims{}
 
 	tkn, err := jwt.ParseWithClaims(tokenString, claims, func(token *jwt.Token) (interface{}, error) {
-		return jwtKey, nil
+		return Jwtkey, nil
 	})
 	if err != nil || !tkn.Valid || claims.Username != "admin" {
 		c.JSON(http.StatusUnauthorized, gin.H{"status": "error", "message": "Unauthorized", "data": nil})

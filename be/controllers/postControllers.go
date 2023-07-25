@@ -4,7 +4,6 @@ import (
 	"SingleService-Labpro/initializers"
 	model "SingleService-Labpro/models"
 	"net/http"
-	"strings"
 
 	"github.com/dgrijalva/jwt-go"
 	"github.com/gin-gonic/gin"
@@ -13,11 +12,11 @@ import (
 
 func PostBarang(c *gin.Context) {
 	authHeader := c.Request.Header.Get("Authorization")
-	tokenString := strings.TrimPrefix(authHeader, "Bearer ")
+	tokenString := authHeader
 	claims := &Claims{}
 
 	tkn, err := jwt.ParseWithClaims(tokenString, claims, func(token *jwt.Token) (interface{}, error) {
-		return jwtKey, nil
+		return Jwtkey, nil
 	})
 
 	if err != nil || !tkn.Valid || claims.Username != "admin" {
@@ -29,13 +28,24 @@ func PostBarang(c *gin.Context) {
 		HargaBarang  int    `json:"harga"`
 		StokBarang   int    `json:"stok"`
 		PerusahaanID string `json:"perusahaan_id"`
-		KodeBarang   string `json:"kodeBarang"`
+		KodeBarang   string `json:"kode"`
 	}
 	if err := c.BindJSON(&request); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"status":  "error",
 			"message": "Invalid JSON format",
 			"data":    nil,
+		})
+		return
+	}
+
+	existingBarang := &model.Barang{}
+	result := initializers.DB.Where("kode_barang = ?", request.KodeBarang).First(existingBarang)
+
+	if result.Error == nil {
+		c.JSON(http.StatusConflict, gin.H{
+			"status":  "error",
+			"message": "Barang with the same KodeBarang already exists",
 		})
 		return
 	}
@@ -48,7 +58,7 @@ func PostBarang(c *gin.Context) {
 		StokBarang:        request.StokBarang,
 		PerusahaanPembuat: request.PerusahaanID,
 	}
-	result := initializers.DB.Create(barang)
+	result = initializers.DB.Create(barang)
 	if result.Error != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{
 			"status":  "error",
@@ -65,11 +75,11 @@ func PostBarang(c *gin.Context) {
 
 func PostCompany(c *gin.Context) {
 	authHeader := c.Request.Header.Get("Authorization")
-	tokenString := strings.TrimPrefix(authHeader, "Bearer ")
+	tokenString := authHeader
 	claims := &Claims{}
 
 	tkn, err := jwt.ParseWithClaims(tokenString, claims, func(token *jwt.Token) (interface{}, error) {
-		return jwtKey, nil
+		return Jwtkey, nil
 	})
 	if err != nil || !tkn.Valid || claims.Username != "admin" {
 		c.JSON(http.StatusUnauthorized, gin.H{"status": "error", "message": "Unauthorized", "data": nil})

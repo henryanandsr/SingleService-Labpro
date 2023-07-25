@@ -3,6 +3,7 @@ package controllers
 import (
 	"SingleService-Labpro/initializers"
 	model "SingleService-Labpro/models"
+	"fmt"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
@@ -27,7 +28,7 @@ func GetBarang(c *gin.Context) {
 }
 func GetPerusahaan(c *gin.Context) {
 	id := c.Param("id")
-
+	fmt.Println("id", id)
 	var perusahaan model.Company
 	if err := initializers.DB.Where("ID = ?", id).First(&perusahaan).Error; err != nil {
 		c.JSON(http.StatusNotFound, gin.H{
