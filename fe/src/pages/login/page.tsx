@@ -16,6 +16,21 @@ const LoginPage = () => {
     });
   };
 
+  const handleLogin = async () => {
+    try {
+      const response = await login(formData.username, formData.password);
+      console.log("Login response :",response);
+      const token = response?.data?.token;
+      if (token){
+        console.log("Token stored:", window.localStorage.getItem("token"));
+      } else{
+        console.log("FKDJKFLDKL");
+      }
+    } catch (error) {
+      console.error("An error occurred during login:", error);
+    }
+  };
+
   return (
     <Center w="100%" h="100vh">
       <VStack px={12} py={6} gap={8} borderRadius="xl" bg="primary.100">
@@ -35,7 +50,7 @@ const LoginPage = () => {
           onChange={handleChangeFormData}
           bg="white"
         />
-        <Button onClick={() => login(formData.username, formData.password)}>Login</Button>
+        <Button onClick={handleLogin}>Login</Button>
       </VStack>
     </Center>
   );

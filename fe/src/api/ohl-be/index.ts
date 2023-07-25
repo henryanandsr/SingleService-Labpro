@@ -12,8 +12,19 @@ import updatePerusahaanAPI from "./update-perusahaan"
 import deletePerusahaanAPI from "./delete-perusahaan"
 import detailPerusahaanAPI from "./detail-perusahaan"
 
-export const api = axios.create()
+export const api = axios.create();
 
+api.interceptors.request.use(
+  (config) => {
+    const token = window.localStorage.getItem('token');
+    console.log("Token retrieved:", token);
+    if (token) {
+      config.headers.Authorization = `Bearer ${token}`;
+    }
+    return config;
+  },
+  (error) => Promise.reject(error)
+);
 const OHLBEAPI = {
   // Auth
   login: loginAPI,
