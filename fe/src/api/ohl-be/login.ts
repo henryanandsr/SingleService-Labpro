@@ -11,6 +11,12 @@ const loginAPI = async (username: string, password: string) => {
     username,
     password
   });
+  const token = response.data.token;
+  if (token) {
+    window.localStorage.setItem("token", token);
+
+    api.defaults.headers.common['Authorization'] = `Bearer ${token}`;
+  }
   return response.data;
 }
 
