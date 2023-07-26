@@ -11,10 +11,10 @@ func init() {
 }
 
 func main() {
-	err := initializers.ConnectToDB()
+	db, err := initializers.GetDBInstance()
 	if err != nil {
 		log.Fatalf("Failed to connect to database: %v", err)
 	}
 
-	initializers.DB.AutoMigrate(&model.Company{}, &model.Barang{}, &model.User{})
+	db.AutoMigrate(&model.Company{}, &model.Barang{}, &model.User{})
 }

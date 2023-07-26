@@ -17,7 +17,6 @@ import (
 
 func init() {
 	initializers.LoadEnvVariables(".env")
-	initializers.ConnectToDB()
 }
 
 func AuthMiddleware() gin.HandlerFunc {
@@ -76,13 +75,18 @@ func main() {
 	r.Use(cors.New(config))
 	port := os.Getenv("PORT")
 
+	db, err := initializers.GetDBInstance() // updated this line
+	if err != nil {
+		log.Fatalf("Failed to connect to database: %v", err)
+	}
+
 	user := model.User{
 		Username: "admin",
 		Password: "admin",
 	}
 	var existingUser model.User
-	if err := initializers.DB.Where("username = ?", user.Username).First(&existingUser).Error; err != nil {
-		if err := initializers.DB.Create(&user).Error; err != nil {
+	if err := db.Where("username = ?", user.Username).First(&existingUser).Error; err != nil { // updated this line
+		if err := db.Create(&user).Error; err != nil { // updated this line
 			fmt.Println("Could not create user: ", err)
 		}
 	} else {

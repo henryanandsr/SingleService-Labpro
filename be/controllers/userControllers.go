@@ -4,6 +4,7 @@ import (
 	"SingleService-Labpro/initializers"
 	model "SingleService-Labpro/models"
 	"fmt"
+	"log"
 	"net/http"
 	"strings"
 
@@ -28,7 +29,11 @@ func Login(c *gin.Context) {
 	fmt.Println("2")
 	fmt.Println("Received credentials: ", credentials)
 	var User model.User
-	if err := initializers.DB.Where("username = ?", credentials.Username).First(&User).Error; err != nil {
+	db, err := initializers.GetDBInstance() // updated this line
+	if err != nil {
+		log.Fatalf("Failed to connect to database: %v", err)
+	}
+	if err := db.Where("username = ?", credentials.Username).First(&User).Error; err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"status": "error", "message": "Invalid username", "data": nil})
 		return
 	}

@@ -3,22 +3,36 @@ package initializers
 import (
 	"log"
 	"os"
+	"sync"
 
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
 )
 
-var DB *gorm.DB
+type database struct {
+	DB *gorm.DB
+}
 
-func ConnectToDB() error {
-	var err error
-	dsn := os.Getenv("DB_URL")
-	DB, err = gorm.Open(postgres.Open(dsn), &gorm.Config{})
+var instance *database
+var once sync.Once
+var dbError error // Add this line
 
-	if err != nil {
-		return err
+func GetDBInstance() (*gorm.DB, error) { // Modify this line
+	once.Do(func() {
+		dsn := os.Getenv("DB_URL")
+		db, err := gorm.Open(postgres.Open(dsn), &gorm.Config{})
+		if err != nil {
+			log.Println("failed to connect to database:", err) // Modify this line
+			dbError = err                                      // Add this line
+			return
+		}
+
+		instance = &database{DB: db}
+		log.Println("database connection successful")
+	})
+
+	if instance == nil {
+		return nil, dbError // Add this line
 	}
-
-	log.Println("database connection successful")
-	return nil
+	return instance.DB, nil // Modify this line
 }

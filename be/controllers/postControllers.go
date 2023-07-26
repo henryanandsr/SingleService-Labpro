@@ -3,6 +3,7 @@ package controllers
 import (
 	"SingleService-Labpro/initializers"
 	model "SingleService-Labpro/models"
+	"log"
 	"net/http"
 
 	"github.com/dgrijalva/jwt-go"
@@ -39,9 +40,13 @@ func PostBarang(c *gin.Context) {
 		return
 	}
 
-	existingBarang := &model.Barang{}
-	result := initializers.DB.Where("kode_barang = ?", request.KodeBarang).First(existingBarang)
+	db, err := initializers.GetDBInstance()
+	if err != nil {
+		log.Fatalf("Failed to connect to database: %v", err)
+	}
 
+	existingBarang := &model.Barang{}
+	result := db.Where("kode_barang = ?", request.KodeBarang).First(existingBarang)
 	if result.Error == nil {
 		c.JSON(http.StatusConflict, gin.H{
 			"status":  "error",
@@ -58,7 +63,7 @@ func PostBarang(c *gin.Context) {
 		StokBarang:        request.StokBarang,
 		PerusahaanPembuat: request.PerusahaanID,
 	}
-	result = initializers.DB.Create(barang)
+	result = db.Create(barang)
 	if result.Error != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{
 			"status":  "error",
@@ -99,6 +104,11 @@ func PostCompany(c *gin.Context) {
 		})
 		return
 	}
+	db, err := initializers.GetDBInstance() // added this line
+	if err != nil {
+		log.Fatalf("Failed to connect to database: %v", err)
+	}
+
 	company := &model.Company{
 		ID:        uuid.New().String(),
 		Nama:      request.Nama,
@@ -106,7 +116,8 @@ func PostCompany(c *gin.Context) {
 		NoTelepon: request.NoTelp,
 		KodePajak: request.Kode,
 	}
-	result := initializers.DB.Create(company)
+
+	result := db.Create(company)
 	if result.Error != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{
 			"status":  "error",

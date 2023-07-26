@@ -3,6 +3,7 @@ package controllers
 import (
 	"SingleService-Labpro/initializers"
 	model "SingleService-Labpro/models"
+	"log"
 	"net/http"
 
 	"github.com/dgrijalva/jwt-go"
@@ -12,8 +13,11 @@ import (
 func UpdateStokBarang(c *gin.Context) {
 	id := c.Param("id")
 	var barang model.Barang
-
-	if err := initializers.DB.Where("ID = ?", id).First(&barang).Error; err != nil {
+	db, err := initializers.GetDBInstance() // updated this line
+	if err != nil {
+		log.Fatalf("Failed to connect to database: %v", err)
+	}
+	if err := db.Where("ID = ?", id).First(&barang).Error; err != nil {
 		c.JSON(http.StatusNotFound, gin.H{
 			"status":  "error",
 			"message": "Barang not found",
@@ -33,8 +37,7 @@ func UpdateStokBarang(c *gin.Context) {
 	}
 
 	barang.StokBarang = updateData.StokBarang
-
-	if err := initializers.DB.Save(&barang).Error; err != nil {
+	if err := db.Save(&barang).Error; err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{
 			"status":  "error",
 			"message": err.Error(),
@@ -63,8 +66,11 @@ func UpdateBarang(c *gin.Context) {
 	}
 	id := c.Param("id")
 	var barang model.Barang
-
-	if err := initializers.DB.Where("ID = ?", id).First(&barang).Error; err != nil {
+	db, err := initializers.GetDBInstance() // updated this line
+	if err != nil {
+		log.Fatalf("Failed to connect to database: %v", err)
+	}
+	if err := db.Where("ID = ?", id).First(&barang).Error; err != nil {
 		c.JSON(http.StatusNotFound, gin.H{
 			"status":  "error",
 			"message": "Barang not found",
@@ -92,8 +98,7 @@ func UpdateBarang(c *gin.Context) {
 	barang.StokBarang = updateData.StokBarang
 	barang.PerusahaanPembuat = updateData.PerusahaanPembuat
 	barang.KodeBarang = updateData.KodeBarang
-
-	if err := initializers.DB.Save(&barang).Error; err != nil {
+	if err := db.Save(&barang).Error; err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{
 			"status":  "error",
 			"message": err.Error(),
@@ -122,8 +127,11 @@ func UpdateCompany(c *gin.Context) {
 	}
 	id := c.Param("id")
 	var company model.Company
-
-	if err := initializers.DB.Where("ID = ?", id).First(&company).Error; err != nil {
+	db, err := initializers.GetDBInstance() // updated this line
+	if err != nil {
+		log.Fatalf("Failed to connect to database: %v", err)
+	}
+	if err := db.Where("ID = ?", id).First(&company).Error; err != nil {
 		c.JSON(http.StatusNotFound, gin.H{
 			"status":  "error",
 			"message": "Company not found",
@@ -150,7 +158,7 @@ func UpdateCompany(c *gin.Context) {
 	company.NoTelepon = updateData.NoTelepon
 	company.KodePajak = updateData.KodePajak
 
-	if err := initializers.DB.Save(&company).Error; err != nil {
+	if err := db.Save(&company).Error; err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{
 			"status":  "error",
 			"message": err.Error(),

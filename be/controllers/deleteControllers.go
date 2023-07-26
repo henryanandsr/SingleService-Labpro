@@ -3,6 +3,7 @@ package controllers
 import (
 	"SingleService-Labpro/initializers"
 	model "SingleService-Labpro/models"
+	"log"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
@@ -10,7 +11,12 @@ import (
 
 func DeleteCompany(c *gin.Context) {
 	id := c.Param("id")
-	tx := initializers.DB.Begin()
+	db, err := initializers.GetDBInstance() // added this line
+	if err != nil {
+		log.Fatalf("Failed to connect to database: %v", err)
+	}
+
+	tx := db.Begin()
 	if tx.Error != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{
 			"status":  "error",
@@ -77,8 +83,11 @@ func DeleteCompany(c *gin.Context) {
 func DeleteBarang(c *gin.Context) {
 	var barang model.Barang
 	id := c.Param("id")
-
-	if err := initializers.DB.Where("ID = ?", id).First(&barang).Error; err != nil {
+	db, err := initializers.GetDBInstance() // added this line
+	if err != nil {
+		log.Fatalf("Failed to connect to database: %v", err)
+	}
+	if err := db.Where("ID = ?", id).First(&barang).Error; err != nil { // replaced initializers.DB with db
 		c.JSON(http.StatusNotFound, gin.H{
 			"status":  "error",
 			"message": "Barang not found",
@@ -87,8 +96,7 @@ func DeleteBarang(c *gin.Context) {
 		return
 	}
 
-	initializers.DB.Delete(&barang)
-
+	db.Delete(&barang)
 	c.JSON(http.StatusOK, gin.H{
 		"status":  "success",
 		"message": "Barang deleted",

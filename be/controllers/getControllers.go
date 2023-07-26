@@ -3,7 +3,7 @@ package controllers
 import (
 	"SingleService-Labpro/initializers"
 	model "SingleService-Labpro/models"
-	"fmt"
+	"log"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
@@ -11,9 +11,13 @@ import (
 
 func GetBarang(c *gin.Context) {
 	id := c.Param("id")
+	db, err := initializers.GetDBInstance()
+	if err != nil {
+		log.Fatalf("Failed to connect to database: %v", err)
+	}
 
 	var barang model.Barang
-	if err := initializers.DB.Where("ID = ?", id).First(&barang).Error; err != nil {
+	if err := db.Where("ID = ?", id).First(&barang).Error; err != nil {
 		c.JSON(http.StatusNotFound, gin.H{
 			"status":  "error",
 			"message": "Barang not found",
@@ -28,9 +32,12 @@ func GetBarang(c *gin.Context) {
 }
 func GetPerusahaan(c *gin.Context) {
 	id := c.Param("id")
-	fmt.Println("id", id)
+	db, err := initializers.GetDBInstance()
+	if err != nil {
+		log.Fatalf("Failed to connect to database: %v", err)
+	}
 	var perusahaan model.Company
-	if err := initializers.DB.Where("ID = ?", id).First(&perusahaan).Error; err != nil {
+	if err := db.Where("ID = ?", id).First(&perusahaan).Error; err != nil {
 		c.JSON(http.StatusNotFound, gin.H{
 			"status":  "error",
 			"message": "Company not found",
@@ -45,7 +52,11 @@ func GetPerusahaan(c *gin.Context) {
 }
 func GetBarangs(c *gin.Context) {
 	var barangs []model.Barang
-	query := initializers.DB.Model(&model.Barang{}).Select("id, kode_barang, nama_barang, harga_barang, stok_barang, perusahaanpembuat")
+	db, err := initializers.GetDBInstance()
+	if err != nil {
+		log.Fatalf("Failed to connect to database: %v", err)
+	}
+	query := db.Model(&model.Barang{}).Select("id, kode_barang, nama_barang, harga_barang, stok_barang, perusahaanpembuat")
 
 	q := c.Query("q")
 	if q != "" {
@@ -74,7 +85,11 @@ func GetBarangs(c *gin.Context) {
 
 func GetPerusahaans(c *gin.Context) {
 	var companies []model.Company
-	query := initializers.DB.Model(&model.Company{}).Select("id, nama, kode_pajak, alamat, no_telepon")
+	db, err := initializers.GetDBInstance()
+	if err != nil {
+		log.Fatalf("Failed to connect to database: %v", err)
+	}
+	query := db.Model(&model.Company{}).Select("id, nama, kode_pajak, alamat, no_telepon")
 
 	if q := c.Query("q"); q != "" {
 		query = query.Where("Nama LIKE ? OR kode_pajak LIKE ?", "%"+q+"%", "%"+q+"%")
