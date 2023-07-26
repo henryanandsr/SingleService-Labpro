@@ -1,14 +1,11 @@
 package controllers
 
 import (
-	"SingleService-Labpro/initializers"
-	model "SingleService-Labpro/models"
-	"log"
+	repositories "SingleService-Labpro/repository"
 	"net/http"
 
 	"github.com/dgrijalva/jwt-go"
 	"github.com/gin-gonic/gin"
-	"github.com/google/uuid"
 )
 
 func PostBarang(c *gin.Context) {
@@ -24,13 +21,7 @@ func PostBarang(c *gin.Context) {
 		c.JSON(http.StatusUnauthorized, gin.H{"status": "error", "message": "Unauthorized", "data": nil})
 		return
 	}
-	var request struct {
-		NamaBarang   string `json:"nama"`
-		HargaBarang  int    `json:"harga"`
-		StokBarang   int    `json:"stok"`
-		PerusahaanID string `json:"perusahaan_id"`
-		KodeBarang   string `json:"kode"`
-	}
+	var request repositories.BarangPostRequest
 	if err := c.BindJSON(&request); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"status":  "error",
@@ -40,37 +31,16 @@ func PostBarang(c *gin.Context) {
 		return
 	}
 
-	db, err := initializers.GetDBInstance()
+	repo := repositories.NewBarangRepository()
+	barang, err := repo.CreateBarang(&request)
 	if err != nil {
-		log.Fatalf("Failed to connect to database: %v", err)
-	}
-
-	existingBarang := &model.Barang{}
-	result := db.Where("kode_barang = ?", request.KodeBarang).First(existingBarang)
-	if result.Error == nil {
 		c.JSON(http.StatusConflict, gin.H{
 			"status":  "error",
-			"message": "Barang with the same KodeBarang already exists",
+			"message": err.Error(),
 		})
 		return
 	}
 
-	barang := &model.Barang{
-		ID:                uuid.New().String(),
-		KodeBarang:        request.KodeBarang,
-		NamaBarang:        request.NamaBarang,
-		HargaBarang:       request.HargaBarang,
-		StokBarang:        request.StokBarang,
-		PerusahaanPembuat: request.PerusahaanID,
-	}
-	result = db.Create(barang)
-	if result.Error != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{
-			"status":  "error",
-			"message": result.Error.Error(),
-		})
-		return
-	}
 	c.JSON(http.StatusOK, gin.H{
 		"status":  "success",
 		"message": "Barang created successfully",
@@ -90,13 +60,7 @@ func PostCompany(c *gin.Context) {
 		c.JSON(http.StatusUnauthorized, gin.H{"status": "error", "message": "Unauthorized", "data": nil})
 		return
 	}
-	var request struct {
-		Nama   string `json:"nama"`
-		Alamat string `json:"alamat"`
-		NoTelp string `json:"no_telp"`
-		Kode   string `json:"kode"`
-	}
-
+	var request repositories.PerusahaanPostRequest
 	if err := c.BindJSON(&request); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"status":  "error",
@@ -104,27 +68,17 @@ func PostCompany(c *gin.Context) {
 		})
 		return
 	}
-	db, err := initializers.GetDBInstance() // added this line
+
+	repo := repositories.NewPerusahaanRepository()
+	company, err := repo.CreatePerusahaan(&request)
 	if err != nil {
-		log.Fatalf("Failed to connect to database: %v", err)
-	}
-
-	company := &model.Company{
-		ID:        uuid.New().String(),
-		Nama:      request.Nama,
-		Alamat:    request.Alamat,
-		NoTelepon: request.NoTelp,
-		KodePajak: request.Kode,
-	}
-
-	result := db.Create(company)
-	if result.Error != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{
 			"status":  "error",
-			"message": result.Error.Error(),
+			"message": err.Error(),
 		})
 		return
 	}
+
 	c.JSON(http.StatusOK, gin.H{
 		"status":  "success",
 		"message": "Company created successfully",

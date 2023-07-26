@@ -1,9 +1,7 @@
 package controllers
 
 import (
-	"SingleService-Labpro/initializers"
-	model "SingleService-Labpro/models"
-	"log"
+	repositories "SingleService-Labpro/repository"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
@@ -11,64 +9,12 @@ import (
 
 func DeleteCompany(c *gin.Context) {
 	id := c.Param("id")
-	db, err := initializers.GetDBInstance() // added this line
+	repo := repositories.NewPerusahaanRepository()
+	company, err := repo.DeletePerusahaan(id)
 	if err != nil {
-		log.Fatalf("Failed to connect to database: %v", err)
-	}
-
-	tx := db.Begin()
-	if tx.Error != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{
-			"status":  "error",
-			"message": tx.Error.Error(),
-		})
-		return
-	}
-
-	var company model.Company
-	if err := tx.Where("ID = ?", id).First(&company).Error; err != nil {
-		tx.Rollback()
-		c.JSON(http.StatusNotFound, gin.H{
-			"status":  "error",
-			"message": "Company not found",
-		})
-		return
-	}
-
-	var barangs []model.Barang
-	if err := tx.Where("PerusahaanPembuat = ?", company.ID).Find(&barangs).Error; err != nil {
-		tx.Rollback()
 		c.JSON(http.StatusInternalServerError, gin.H{
 			"status":  "error",
 			"message": err.Error(),
-		})
-		return
-	}
-
-	for _, barang := range barangs {
-		if err := tx.Delete(&barang).Error; err != nil {
-			tx.Rollback()
-			c.JSON(http.StatusInternalServerError, gin.H{
-				"status":  "error",
-				"message": "Error deleting barang with ID: " + barang.ID,
-			})
-			return
-		}
-	}
-
-	if err := tx.Delete(&company).Error; err != nil {
-		tx.Rollback()
-		c.JSON(http.StatusInternalServerError, gin.H{
-			"status":  "error",
-			"message": err.Error(),
-		})
-		return
-	}
-
-	if err := tx.Commit().Error; err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{
-			"status":  "error",
-			"message": "Transaction failed",
 		})
 		return
 	}
@@ -81,22 +27,17 @@ func DeleteCompany(c *gin.Context) {
 }
 
 func DeleteBarang(c *gin.Context) {
-	var barang model.Barang
 	id := c.Param("id")
-	db, err := initializers.GetDBInstance() // added this line
+	repo := repositories.NewBarangRepository()
+	barang, err := repo.DeleteBarang(id)
 	if err != nil {
-		log.Fatalf("Failed to connect to database: %v", err)
-	}
-	if err := db.Where("ID = ?", id).First(&barang).Error; err != nil { // replaced initializers.DB with db
 		c.JSON(http.StatusNotFound, gin.H{
 			"status":  "error",
 			"message": "Barang not found",
-			"data":    nil,
 		})
 		return
 	}
 
-	db.Delete(&barang)
 	c.JSON(http.StatusOK, gin.H{
 		"status":  "success",
 		"message": "Barang deleted",
