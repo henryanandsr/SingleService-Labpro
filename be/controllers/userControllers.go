@@ -64,7 +64,7 @@ func Login(c *gin.Context) {
 
 func Self(c *gin.Context) {
 	tokenString := c.Request.Header.Get("Authorization")
-	tokenString = strings.Split(tokenString, " ")[1] // Get the token part after "Bearer "
+	tokenString = strings.Split(tokenString, " ")[0]
 	claims := &Claims{}
 
 	tkn, err := jwt.ParseWithClaims(tokenString, claims, func(token *jwt.Token) (interface{}, error) {

@@ -11,7 +11,7 @@ import (
 func UpdateStokBarang(c *gin.Context) {
 	id := c.Param("id")
 	var updateData struct {
-		StokBarang int `json:"stok"` // only allow updating stock
+		StokBarang int `json:"stok"` // only update stok
 	}
 
 	if err := c.BindJSON(&updateData); err != nil {
