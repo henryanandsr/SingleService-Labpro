@@ -16,7 +16,12 @@ import (
 )
 
 func init() {
-	initializers.LoadEnvVariables(".env")
+	if os.Getenv("ENVIRONMENT") == "development" {
+		initializers.LoadEnvVariables(".env")
+	} else {
+		os.Getenv("DB_URL")
+		os.Getenv("PORT")
+	}
 }
 
 func AuthMiddleware() gin.HandlerFunc {

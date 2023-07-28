@@ -15,15 +15,15 @@ type database struct {
 
 var instance *database
 var once sync.Once
-var dbError error // Add this line
+var dbError error
 
-func GetDBInstance() (*gorm.DB, error) { // Modify this line
+func GetDBInstance() (*gorm.DB, error) {
 	once.Do(func() {
 		dsn := os.Getenv("DB_URL")
 		db, err := gorm.Open(postgres.Open(dsn), &gorm.Config{})
 		if err != nil {
-			log.Println("failed to connect to database:", err) // Modify this line
-			dbError = err                                      // Add this line
+			log.Println("failed to connect to database:", err)
+			dbError = err                                     
 			return
 		}
 
@@ -32,7 +32,7 @@ func GetDBInstance() (*gorm.DB, error) { // Modify this line
 	})
 
 	if instance == nil {
-		return nil, dbError // Add this line
+		return nil, dbError
 	}
-	return instance.DB, nil // Modify this line
+	return instance.DB, nil
 }

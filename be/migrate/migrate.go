@@ -4,10 +4,16 @@ import (
 	"SingleService-Labpro/initializers"
 	model "SingleService-Labpro/models"
 	"log"
+	"os"
 )
 
 func init() {
-	initializers.LoadEnvVariables("../.env")
+	if os.Getenv("ENVIRONMENT") == "development" {
+		initializers.LoadEnvVariables("../.env")
+	} else {
+		os.Getenv("DB_URL")
+		os.Getenv("PORT")
+	}
 }
 
 func main() {
