@@ -74,10 +74,12 @@ func main() {
 	migrate.MigrateAndSeed()
 	r := gin.Default()
 	config := cors.DefaultConfig()
-	config.AllowOrigins = []string{"https://single-service-labpro.vercel.app", "https://monolith-full-stack.vercel.app", "https://ohl-fe.vercel.app", "http://localhost:5173", "http://localhost:8001"}
+	// config.AllowOrigins = []string{"https://single-service-labpro.vercel.app", "https://monolith-full-stack.vercel.app", "https://ohl-fe.vercel.app", "http://localhost:5173", "http://localhost:8001"}
+	config.AllowOrigins = []string{}
 	config.AllowHeaders = []string{"Origin", "Content-Length", "Content-Type", "Authorization"}
 	config.AllowCredentials = true
 	r.Use(cors.New(config))
+	gin.SetMode(gin.ReleaseMode)
 	port := os.Getenv("PORT")
 	authorized := r.Group("/")
 	authorized.Use(AuthMiddleware())
