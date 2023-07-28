@@ -7,4 +7,3 @@ services:
     environment:
       - DATABASE_URL=postgres://postgres:IyNfhnhGPmPSsXd0nkAo@containers-us-west-157.railway.app:6617/railway?sslmode=require
       - PORT=8080
-
