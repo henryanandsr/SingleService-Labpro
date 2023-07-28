@@ -1,7 +1,7 @@
 package models
 
 type Barang struct {
-	ID                string `gorm:"primary_key;auto_increment" json:"id"`
+	ID                string `gorm:"primary_key" json:"id"`
 	KodeBarang        string `gorm:"not null;unique" json:"kode"`
 	NamaBarang        string `gorm:"size:255;not null" json:"nama"`
 	HargaBarang       int    `gorm:"not null;check:harga_barang > 0" json:"harga"`
@@ -10,7 +10,7 @@ type Barang struct {
 }
 
 type Company struct {
-	ID        string `gorm:"primary_key;auto_increment" json:"id"`
+	ID        string `gorm:"primary_key" json:"id"`
 	Nama      string `gorm:"size:255;not null" json:"nama"`
 	Alamat    string `gorm:"size:255;not null" json:"alamat"`
 	NoTelepon string `gorm:"size:20;not null" json:"no_telp"`

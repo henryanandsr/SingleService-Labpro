@@ -19,11 +19,12 @@ var dbError error
 
 func GetDBInstance() (*gorm.DB, error) {
 	once.Do(func() {
-		dsn := os.Getenv("DB_URL")
-		db, err := gorm.Open(postgres.Open(dsn), &gorm.Config{})
+		dbURL := os.Getenv("DB_URL")
+		db, err := gorm.Open(postgres.Open(dbURL), &gorm.Config{})
+
 		if err != nil {
 			log.Println("failed to connect to database:", err)
-			dbError = err                                     
+			dbError = err
 			return
 		}
 

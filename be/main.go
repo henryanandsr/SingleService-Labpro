@@ -3,9 +3,8 @@ package main
 import (
 	"SingleService-Labpro/controllers"
 	"SingleService-Labpro/initializers"
-	model "SingleService-Labpro/models"
+	"SingleService-Labpro/migrate"
 	"fmt"
-	"log"
 	"net/http"
 	"os"
 	"strings"
@@ -71,6 +70,8 @@ func AuthMiddleware() gin.HandlerFunc {
 }
 
 func main() {
+	// do a migration
+	migrate.MigrateAndSeed()
 	r := gin.Default()
 	config := cors.DefaultConfig()
 	config.AllowOrigins = []string{"https://single-service-labpro.vercel.app", "https://monolith-full-stack.vercel.app", "https://ohl-fe.vercel.app", "http://localhost:5173", "http://localhost:8001"}
@@ -78,25 +79,6 @@ func main() {
 	config.AllowCredentials = true
 	r.Use(cors.New(config))
 	port := os.Getenv("PORT")
-
-	db, err := initializers.GetDBInstance()
-	if err != nil {
-		log.Fatalf("Failed to connect to database: %v", err)
-	}
-
-	user := model.User{
-		Username: "admin",
-		Password: "admin",
-	}
-	var existingUser model.User
-	if err := db.Where("username = ?", user.Username).First(&existingUser).Error; err != nil {
-		if err := db.Create(&user).Error; err != nil {
-			fmt.Println("Could not create user: ", err)
-		}
-	} else {
-		fmt.Println("User already exists")
-	}
-	log.Println("User created")
 	authorized := r.Group("/")
 	authorized.Use(AuthMiddleware())
 	{
