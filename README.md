@@ -6,10 +6,50 @@
 | Henry Anand Septian Radityo | 13521004 |
 
 ## :running_man: How to run the program
-### Local
-1. `go run main.go` or `docker-compose up`
+### Prerequisites
+- Docker and Docker Compose (for Docker setup)
+- Go (for local setup)
+### Go Local Setup
+1. Clone the repository:
+    ```bash
+    git clone https://github.com/henryanandsr/SingleService-Labpro
+    ```
+
+2. Navigate to the project directory:
+    ```bash
+    cd SingleService-Labpro/be
+    ```
+
+3. Download the dependencies:
+    ```bash
+    go mod download
+    ```
+
+4. Run the application:
+    ```bash
+    go run main.go
+    ```
+The application should now be accessible at `http://localhost:3001`.
+
+### Docker setup
+1. Clone the repository:
+    ```bash
+    git clone https://github.com/henryanandsr/SingleService-Labpro
+    ```
+
+2. Navigate to the project directory:
+    ```bash
+    cd SingleService-Labpro/be
+    ```
+
+3. Download the dependencies:
+    ```bash
+   docker-compose up
+    ```
+The application should now be accessible at `http://localhost:3001`.
+
 ### Deployments
-1. Already ran at `https://singleservice-labpro-production.up.railway.app`
+1. Server already run at `https://singleservice-labpro-production.up.railway.app`
 
 ## :books: Design Pattern
 1. Singleton Pattern
@@ -23,18 +63,18 @@
 Go (Golang), Postgresql, Gin, GORM, Docker
 
 ## :purple_circle: Endpoint
-POST /login
-GET /self
-GET /barang
-GET /barang:id 
-POST /barang
-UPDATE /barang/:id
-DELETE /barang/:id
-GET /perusahaan
-GET /perusahaan/:id
-POST /perusahaan
-UPDATE /perusahaan/:id
-DELETE /perusahaan/:id
+- POST /login
+- GET /self
+- GET /barang
+- GET /barang:id 
+- POST /barang
+- UPDATE /barang/:id
+- DELETE /barang/:id
+- GET /perusahaan
+- GET /perusahaan/:id
+- POST /perusahaan
+- UPDATE /perusahaan/:id
+- DELETE /perusahaan/:id
 
 ## :white_check_mark:	Bonus
 1. Deployment
@@ -49,3 +89,4 @@ DELETE /perusahaan/:id
 <img width="960" alt="register" src = "https://github.com/henryanandsr/SingleService-Labpro/assets/39207406/ba5c7fb9-25e0-4ad8-8080-1b82beecccb5">
 <img width="960" alt="detailbarang" src="https://github.com/henryanandsr/SingleService-Labpro/assets/39207406/73c45a41-a0f6-4b53-baae-d1644af1544e">
 <img width="959" alt="beli" src="https://github.com/henryanandsr/SingleService-Labpro/assets/39207406/3af3ad48-7f03-423c-9bc0-91c7f09f55ea">
+<img width="960" alt="riwayat" src="https://github.com/henryanandsr/Monolith-FullStack/assets/39207406/d64254e8-8156-4722-8975-b1daf435daf8">
