@@ -81,6 +81,7 @@ Go (Golang), Postgresql, Gin, GORM, Docker
 2. Responsive Layout
 3. Lighthouse
 4. Search Feature
+5. Polling
 
 ## :bulb: Lighthouse screenshot
 <img width="960" alt="katalog" src="https://github.com/henryanandsr/SingleService-Labpro/assets/39207406/e902e5b3-0920-4191-98ec-3c90649ba3da">
